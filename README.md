@@ -19,27 +19,31 @@ Some background: Due to the way WordPress upgrades plugins, the WPSC plugins you
 - Download [minify](https://code.google.com/p/minify/downloads/list), extract and copy (or move) `/min/` directory to `WP_CONTENT_DIR/wpscplugins/`.
 - Download [WPSCMin Reloaded plugin](https://raw2.github.com/pothi/wpscmin-reloaded/master/WPSCMin.php) and keep it at `WP_CONTENT_DIR/wpscplugins/`.
 
-After the above steps, your `WP_CONTENT_DIR` might look like...
+At the end of this step, your `WP_CONTENT_DIR` might look like...
 
--- index.php
--- plugins/
--- themes/
--- uploads/
--- upgrades/
--- wpscplugins/
-   -- WPSCMin.php
-   -- min/
-      -- builder/
-      -- lib/
-      -- config.php
-      -- utils.php
-      -- ...
+* index.php  
+* plugins/  
+* themes/  
+* uploads/  
+* upgrades/  
+* wpscplugins/  
+  * WPSCMin.php
+  * min/  
+    * builder/  
+    * lib/  
+    * config.php  
+    * utils.php  
+    * ...
 
 #### Step 2:
 
 - Open the file `wp-cache-config.php` (that may reside in your `WP_CONTENT_DIR`)
 - Edit the line that defines `$wp_cache_plugins_dir`
 - Assign the value for `$wp_cache_plugins_dir` to `WP_CONTENT_DIR . '/wpscplugins/'`
+
+So, at the end of this step, you'd see the following line in `wp-cache-config.php`...
+
+`$wp_cache_plugins_dir = WP_CONTENT_DIR . '/wpscplugins/'`
 
 #### Step 3: Optional
 - Copy (or move) all the existing plugins for WP Super Cache from `WP_PLUGINS_DIR/wp-super-cache/plugins/` to `WP_CONTENT_DIR/wpscplugins/`
