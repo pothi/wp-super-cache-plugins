@@ -11,9 +11,9 @@ Tested with the following...
 
 ## Installation
 
-Step 1: New plugins directory for WP Super Cache
+#### Step 1:
 
-Some background: Due to the way WordPress upgrades plugins the plugins you upload to wp-super-cache/plugins/ will be deleted when you upgrade WP Super Cache. We can avoid this by loading the plugins from elsewhere, set `$wp_cache_plugins_dir` to the new location in `wp-cache-config.php` and WP Super Cache will look there instead.
+Some background: Due to the way WordPress upgrades plugins, the WPSC plugins you upload to `wp-super-cache/plugins/` will be deleted when you upgrade WP Super Cache. We can avoid this by loading the plugins from elsewhere by setting `$wp_cache_plugins_dir` to the new location in `wp-cache-config.php`. Now, WP Super Cache will look there instead.
 
 - Create a directory named 'wpscplugins' (you may choose any name, though) inside `WP_CONTENT_DIR` (that is usually `/wp-content/`)
 - Download [minify](https://code.google.com/p/minify/), extract and copy (or move) `/min/` directory to `WP_CONTENT_DIR/wpscplugins/`.
@@ -35,13 +35,13 @@ After the above steps, your `WP_CONTENT_DIR` might look like...
       -- utils.php
       -- ...
 
-Step 2: Define the new plugins directory
+#### Step 2:
 
 - Open the file `wp-cache-config.php` (that may reside in your `WP_CONTENT_DIR`)
 - Edit the line that defines `$wp_cache_plugins_dir`
-- You may assign the value for `$wp_cache_plugins_dir` to `WP_CONTENT_DIR . '/wpscplugins/'`
+- Assign the value for `$wp_cache_plugins_dir` to `WP_CONTENT_DIR . '/wpscplugins/'`
 
-Step 3: Optional
+#### Step 3: Optional
 - Copy (or move) all the existing plugins for WP Super Cache from `WP_PLUGINS_DIR/wp-super-cache/plugins/` to `WP_CONTENT_DIR/wpscplugins/`
 
 ## Question?
