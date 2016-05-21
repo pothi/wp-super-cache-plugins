@@ -16,7 +16,7 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/*  class WPSCMin
+/*  class WPSCJSLoader
  *
  *  Singleton class add-on to WP Super Cache to interface with HTML Minify
  *  Author: Joel Hardi
@@ -38,7 +38,7 @@
  *  plugins directory. See http://lyncd.com/wpscmin/ for instructions.
  */
 
-class WPSCMin {
+class WPSCJSLoader {
   private $enabled = FALSE; // Whether Minify is enabled
   private $changed = FALSE; // Whether value of $enabled has been changed
 
@@ -73,7 +73,7 @@ class WPSCMin {
       $this->wp_cache_config_file = $GLOBALS['wp_cache_config_file'];
   }
 
-  // returns object instance of WPSCMin
+  // returns object instance of WPSCJSLoader
   public static function getInstance() {
     if (empty(self::$instance))
       self::$instance = new self();
@@ -87,22 +87,8 @@ class WPSCMin {
   // Given string $html, returns minified version.
   // Preserves HTML comments appended by WP Super Cache
   public static function minifyPage($html) {
-/*
-    For versions of WP Super Cache 0.9.9.5 and earlier, uncomment the code
-    section below, and comment out (or delete) the alternate code section
-    for versions 0.9.9.6+.
-*/
-  //  $parts = preg_split('/\s*(<\!-- Dynamic page generated in [^->]+-->)\s*/', $html, 2, PREG_SPLIT_DELIM_CAPTURE);
-  //  self::getInstance()->minify($parts[0]);
-  //  return implode("\n", $parts);
-/* 
-    This is the simpler, regex hack-free version for WP Super Cache 0.9.9.6+.
-*/
     self::getInstance()->minify($html);
     return $html;
-/*
-    End alternate versions
-*/
   }
 
   // Minifies string referenced by $html, if $this->enabled is TRUE
@@ -110,76 +96,59 @@ class WPSCMin {
     if (!$this->enabled or $this->skipping_known_user)
       return;
 
-$header_script_js = '<!-- javascript loader --><script type="text/javascript">(function(e,t){typeof module!="undefined"&&module.exports?module.exports=t():typeof define=="function"&&define.amd?define(t):this[e]=t()})("$script",function(){function p(e,t){for(var n=0,i=e.length;n<i;++n)if(!t(e[n]))return r;return 1}function d(e,t){p(e,function(e){return t(e),1})}function v(e,t,n){function g(e){return e.call?e():u[e]}function y(){if(!--h){u[o]=1,s&&s();for(var e in f)p(e.split("|"),g)&&!d(f[e],g)&&(f[e]=[])}}e=e[i]?e:[e];var r=t&&t.call,s=r?t:n,o=r?e.join(""):t,h=e.length;return setTimeout(function(){d(e,function t(e,n){if(e===null)return y();!n&&!/^https?:\/\//.test(e)&&c&&(e=e.indexOf(".js")===-1?c+e+".js":c+e);if(l[e])return o&&(a[o]=1),l[e]==2?y():setTimeout(function(){t(e,!0)},0);l[e]=1,o&&(a[o]=1),m(e,y)})},0),v}function m(n,r){var i=e.createElement("script"),u;i.onload=i.onerror=i[o]=function(){if(i[s]&&!/^c|loade/.test(i[s])||u)return;i.onload=i[o]=null,u=1,l[n]=2,r()},i.async=1,i.src=h?n+(n.indexOf("?")===-1?"?":"&")+h:n,t.insertBefore(i,t.lastChild)}var e=document,t=e.getElementsByTagName("head")[0],n="string",r=!1,i="push",s="readyState",o="onreadystatechange",u={},a={},f={},l={},c,h;return v.get=m,v.order=function(e,t,n){(function r(i){i=e.shift(),e.length?v(i,r):v(i,t,n)})()},v.path=function(e){c=e},v.urlArgs=function(e){h=e},v.ready=function(e,t,n){e=e[i]?e:[e];var r=[];return!d(e,function(e){u[e]||r[i](e)})&&p(e,function(e){return u[e]})?t():!function(e){f[e]=f[e]||[],f[e][i](t),n&&n(r)}(e.join("|")),v},v.done=function(e){v([null],e)},v})
-     </script>';
+    $header_script_js = '<!-- javascript loader --><script type="text/javascript">(function(e,t){typeof module!="undefined"&&module.exports?module.exports=t():typeof define=="function"&&define.amd?define(t):this[e]=t()})("$script",function(){function p(e,t){for(var n=0,i=e.length;n<i;++n)if(!t(e[n]))return r;return 1}function d(e,t){p(e,function(e){return t(e),1})}function v(e,t,n){function g(e){return e.call?e():u[e]}function y(){if(!--h){u[o]=1,s&&s();for(var e in f)p(e.split("|"),g)&&!d(f[e],g)&&(f[e]=[])}}e=e[i]?e:[e];var r=t&&t.call,s=r?t:n,o=r?e.join(""):t,h=e.length;return setTimeout(function(){d(e,function t(e,n){if(e===null)return y();!n&&!/^https?:\/\//.test(e)&&c&&(e=e.indexOf(".js")===-1?c+e+".js":c+e);if(l[e])return o&&(a[o]=1),l[e]==2?y():setTimeout(function(){t(e,!0)},0);l[e]=1,o&&(a[o]=1),m(e,y)})},0),v}function m(n,r){var i=e.createElement("script"),u;i.onload=i.onerror=i[o]=function(){if(i[s]&&!/^c|loade/.test(i[s])||u)return;i.onload=i[o]=null,u=1,l[n]=2,r()},i.async=1,i.src=h?n+(n.indexOf("?")===-1?"?":"&")+h:n,t.insertBefore(i,t.lastChild)}var e=document,t=e.getElementsByTagName("head")[0],n="string",r=!1,i="push",s="readyState",o="onreadystatechange",u={},a={},f={},l={},c,h;return v.get=m,v.order=function(e,t,n){(function r(i){i=e.shift(),e.length?v(i,r):v(i,t,n)})()},v.path=function(e){c=e},v.urlArgs=function(e){h=e},v.ready=function(e,t,n){e=e[i]?e:[e];var r=[];return!d(e,function(e){u[e]||r[i](e)})&&p(e,function(e){return u[e]})?t():!function(e){f[e]=f[e]||[],f[e][i](t),n&&n(r)}(e.join("|")),v},v.done=function(e){v([null],e)},v})</script>';
 
-$content = $html;
+    $pattern_full_js = '#<script .+</script>#i';
 
-$pattern_full_js = '#<script .+</script>#i';
+    // find all javascript patterns "<script src=some.js"></script>"
+    if( preg_match_all( $pattern_full_js, $html, $matches ) ) :
 
-// $js_scripts = array();
+        $is_jquery = false;
+        $is_jquery_dependent = false;
+        // TODO: there may be some script that is independent of jquery and that may be declared before jquery
+        // remember navigation.js? - current logic simply ignores such scripts
+        foreach( $matches[0] as $val ):
+            // to skip all javascripts before finding jquery
+            if( preg_match( "/jquery/", $val ) ) $is_jquery = true;
 
-// find all javascript patterns "<script src=some.js"></script>"
-if( preg_match_all( $pattern_full_js, $content, $matches ) ) :
+            if( $is_jquery ) :
+                $pattern_js_single_quote = "/src='([^']+)'/";
+                $pattern_js_double_quote = '/src="([^"]+)"/';
 
-    // print_r( $matches );
+                // extract only the "src" part
+                if( preg_match( $pattern_js_double_quote, $val, $js_src ) || preg_match( $pattern_js_single_quote, $val, $js_src ) ) :
 
-    $is_jquery = false;
-    $is_jquery_dependent = false;
-    // TODO: there may be some script that is independent of jquery and that may be declared before jquery
-    // remember navigation.js?
-    // current logic simply ignores such scripts
-    foreach( $matches[0] as $val ):
-        // to skip all javascripts before finding jquery
-        if( preg_match( "/jquery/", $val ) ) $is_jquery = true;
+                    // insert the "src" part in footer
+                    if( $is_jquery_dependent == false ) :
+                        $footer_script_js = '<script type="text/javascript"> ' . "\n";
+                        $footer_script_js = $footer_script_js . '$script( "' . $js_src[1] . '" , function() { try{jQuery.noConflict();}catch(e){}; ' . "\n";
+                        $is_jquery_dependent = true;
+                    else:
+                        $footer_script_js = $footer_script_js . '$script( "' . $js_src[1] . '" );' . "\n";
+                    endif; // $i
 
-        if( $is_jquery ) :
-            $pattern_js_single_quote = "/src='([^']+)'/";
-            $pattern_js_double_quote = '/src="([^"]+)"/';
+                    // now let's remove the whole script tag
+                    $html = str_replace( $val . "\n", "", $html, $count );
+                    // the following throws a generic "parse error"
+                    // if( $count == false || $count > 1 ) echo "Error occurred while removing full script line/s.\n";
 
-            // extract only the "src" part
-            if( preg_match( $pattern_js_double_quote, $val, $js_src ) || preg_match( $pattern_js_single_quote, $val, $js_src ) ) :
-
-                // insert the "src" part in footer
-                if( $is_jquery_dependent == false ) :
-                    $footer_script_js = '<script type="text/javascript"> ' . "\n";
-                    $footer_script_js = $footer_script_js . '$script( "' . $js_src[1] . '" , function() { try{jQuery.noConflict();}catch(e){}; ' . "\n";
-                    $is_jquery_dependent = true;
                 else:
-                    $footer_script_js = $footer_script_js . '$script( "' . $js_src[1] . '" );' . "\n";
-                endif; // $i
-                // echo $js_src[1] . "\n";
+                    echo "Something went wrong while trying to get js_src.\n";
+                endif; // preg_match: pattern_full_js " & '
+            endif; // is_jquery
+        endforeach; // $matches
+        
+        $footer_script_js = $footer_script_js . "});</script>\n";
 
-                // now let's remove the whole script tag
-                $content = str_replace( $val . "\n", "", $content, $count );
-                // the following throws a generic "parse error"
-                // if( $count == false || $count > 1 ) echo "Error occurred while removing full script line/s.\n";
+    else:
+        echo "No matching javascript found\n";
+    endif; // preg_match_all pattern_full_js
 
-            else:
-                echo "Something went wrong while trying to get js_src.\n";
-            endif; // preg_match: pattern_full_js " & '
-            // echo $val . "\n";
-        endif; // is_jquery
-    endforeach; // $matches
-    
-    $footer_script_js = $footer_script_js . "});</script>\n";
-    // echo $footer_script_js;
+    $html = str_replace( "</head>", $header_script_js . "</head>", $html, $count );
+    if( $count == false || $count > 1 ) echo "Error occurred while inserting header_script_js.\n";
 
-else:
-    echo "No matching javascript found\n";
-endif; // preg_match_all pattern_full_js
-
-// $content = preg_replace( "#</head>#", $header_script_js . "$0", $content, -1, $count );
-$content = str_replace( "</head>", $header_script_js . "</head>", $content, $count );
-// echo "No of replacements done for header_script_js: $count\n";
-if( $count == false || $count > 1 ) echo "Error occurred while inserting header_script_js.\n";
-
-// $content = preg_replace( "#</body>#", $footer_script_js . "$0", $content, -1, $count );
-$content = str_replace( "</body>", $footer_script_js . "</body>", $content, $count );
-// echo "No of replacements done for footer_script_js: $count\n";
-if( $count == false || $count > 1 ) echo "Error occurred while inserting footer_script_js.\n";
-
-    $html = $content;
+    $html = str_replace( "</body>", $footer_script_js . "</body>", $html, $count );
+    if( $count == false || $count > 1 ) echo "Error occurred while inserting footer_script_js.\n";
 
   }
 
@@ -196,14 +165,14 @@ if( $count == false || $count > 1 ) echo "Error occurred while inserting footer_
     $id = 'htmlminify-section';
     ?>
     <fieldset id="<?php echo $id; ?>" class="options"> 
-    <h4>HTML Minify</h4>
+    <h4>Javascript Loader</h4>
     <form name="wp_manager" action="<?php echo $action.'#'.$id; ?>" method="post">
       <label><input type="radio" name="<?php echo self::$config_varname; ?>" value="1" <?php if( $this->enabled ) { echo 'checked="checked" '; } ?>/> Enabled</label>
       <label><input type="radio" name="<?php echo self::$config_varname; ?>" value="0" <?php if( !$this->enabled ) { echo 'checked="checked" '; } ?>/> Disabled</label>
-      <p>Enables or disables <a target="_blank" href="http://code.google.com/p/minify/">Minify</a> (stripping of unnecessary comments and whitespace) of cached HTML output. Disable this if you encounter any problems or need to read your source code.</p>
+      <p>Enables or disables javascript loader in the cached HTML output. Disable this if you encounter any problems or need to read your source code.</p>
     <?php
     if ($this->changed) {
-      echo "<p><strong>HTML Minify is now ";
+      echo "<p><strong>Javascript Loader is now ";
       if ($this->enabled)
         echo "enabled";
       else
@@ -220,14 +189,14 @@ if( $count == false || $count > 1 ) echo "Error occurred while inserting footer_
   }
 
   private function strCapture($matches) {
-    $placeholder = 'X_WPSCMin_escaped_string_'.count($this->escapedStrings);
+    $placeholder = 'X_WPSCJSLoader_escaped_string_'.count($this->escapedStrings);
     $this->escapedStrings[$placeholder] = $matches[1];
     return $placeholder;
   }
 }
 
 
-/* function WPSCMin_settings
+/* function WPSCJSLoader_settings
  *
  * Inserts an "on/off switch" for HTML Minify into the WP Super Cache
  * configuration screen in WordPress' settings section.
@@ -239,19 +208,19 @@ if( $count == false || $count > 1 ) echo "Error occurred while inserting footer_
  * http://ocaoimh.ie/wp-super-cache-developers/
  */
 
-function WPSCMin_settings() {
+function WPSCJSLoader_settings() {
   // Update option if it has been changed
-  if (isset($_POST[WPSCMin::$config_varname]))
-    WPSCMin::getInstance()->updateOption($_POST[WPSCMin::$config_varname]);
+  if (isset($_POST[WPSCJSLoader::$config_varname]))
+    WPSCJSLoader::getInstance()->updateOption($_POST[WPSCJSLoader::$config_varname]);
 
   // Print HTML Minify configuration section
-  WPSCMin::getInstance()->printOptionsForm($_SERVER['REQUEST_URI']);
+  WPSCJSLoader::getInstance()->printOptionsForm($_SERVER['REQUEST_URI']);
 }
 
-add_cacheaction('cache_admin_page', 'WPSCMin_settings');
+add_cacheaction('cache_admin_page', 'WPSCJSLoader_settings');
 
 
-/* function WPSCMin_minify
+/* function WPSCJSLoader_minify
  *
  * Adds filter to minify the WP Super Cache buffer when wpsupercache_buffer
  * filters are executed in wp-cache-phase2.php.
@@ -260,14 +229,14 @@ add_cacheaction('cache_admin_page', 'WPSCMin_settings');
  * add_cacheaction() plugin hook system of WP Super Cache.
  */
 
-function WPSCMin_minify() {
-  add_filter('wpsupercache_buffer', array('WPSCMin', 'minifyPage'));
+function WPSCJSLoader_minify() {
+  add_filter('wpsupercache_buffer', array('WPSCJSLoader', 'minifyPage'));
 }
 
-add_cacheaction('add_cacheaction', 'WPSCMin_minify');
+add_cacheaction('add_cacheaction', 'WPSCJSLoader_minify');
 
 
-/* function WPSCMin_check_known_user
+/* function WPSCJSLoader_check_known_user
  *
  * Checks filtered $_COOKIE contents and global var $wp_cache_not_logged_in 
  * to skip minification of dynamic page contents for a detected known user. 
@@ -277,15 +246,15 @@ add_cacheaction('add_cacheaction', 'WPSCMin_minify');
  * add_cacheaction() plugin hook system of WP Super Cache.
  */
 
-function WPSCMin_check_known_user($string) {
+function WPSCJSLoader_check_known_user($string) {
   if ($GLOBALS['wp_cache_not_logged_in'] and $string != '') {
     // Detected known user per logic in wp-cache-phase2.php 
     // (see line 378 in WP Super Cache 0.9.9.8)
-    WPSCMin::skipKnownUser();
+    WPSCJSLoader::skipKnownUser();
   }
   return $string;
 }
 
-add_cacheaction('wp_cache_get_cookies_values', 'WPSCMin_check_known_user');
+add_cacheaction('wp_cache_get_cookies_values', 'WPSCJSLoader_check_known_user');
 
 ?>
