@@ -18,37 +18,32 @@
 
 /*  class WPSCJSLoader
  *
- *  Singleton class add-on to WP Super Cache to interface with HTML Minify
- *  Author: Joel Hardi
- *  Author URI: http://lyncd.com/wpscmin/
- *  Version 0.7
+ *  Singleton class add-on to WP Super Cache to interface with Javascript Loader
+ *  Author: Pothi Kalimuthu
+ *  Author URI: https://www.tinywp.in/
+ *  Version 0.2
  *
  *  WP Super Cache is a static caching plugin for WordPress
  *    For more information, see: http://ocaoimh.ie/wp-super-cache/
  *
- *  Minify is an HTML/CSS/JS whitespace compression library in PHP
- *    For more information, see: http://code.google.com/p/minify/
+ *  Javascript Loader loads all the javascript asynchronously and correctly in order
  *
  *  This plugin to WP Super Cache is a simple Singleton class that adds 
- *  minification of static HTML and gzipped HTML files that WP Super Cache 
- *  saves to the filesystem. It also adds a on/off configuration panel to 
- *  WP Super Cache's WordPress settings page in the WordPress backend.
+ *  a javascript loader to load all JS asynchrounously and in order
  *
- *  It requires that you download and install Minify into the WP Super Cache 
- *  plugins directory. See http://lyncd.com/wpscmin/ for instructions.
  */
 
 class WPSCJSLoader {
-  private $enabled = FALSE; // Whether Minify is enabled
+  private $enabled = FALSE; // Whether Javascript Loader is enabled
   private $changed = FALSE; // Whether value of $enabled has been changed
 
   // Full path and filename of wp-cache-config.php
   // (currently set from global var $wp_cache_config_file)
   private $wp_cache_config_file;
-  // Name of global var (optionally) setting minify_path in wp-cache-config.php
-  // (if doesn't exist, constructor sets minify_path to Super Cache plugin dir)
-  private $config_varname_minify_path = 'cache_minify_path';
-  private $minify_path;
+  // Name of global var (optionally) setting js_loader_path in wp-cache-config.php
+  // (if doesn't exist, constructor sets js_loader_path to Super Cache plugin dir)
+  private $config_varname_js_loader_path = 'cache_js_loader_path';
+  private $js_loader_path;
 
   // Set to TRUE if $wp_cache_not_logged_in is enabled and 
   // wp_cache_get_cookies_values() returns a non-empty string. 
@@ -58,7 +53,7 @@ class WPSCJSLoader {
   private $escapedStrings = array();
 
   // Name of global config var set in wp-cache-config.php
-  public static $config_varname = 'cache_minify';
+  public static $config_varname = 'cache_javascript_loader';
   private static $instance;
 
   // Will run once only, since private and called only by getInstance()
@@ -86,13 +81,13 @@ class WPSCJSLoader {
 
   // Given string $html, returns minified version.
   // Preserves HTML comments appended by WP Super Cache
-  public static function minifyPage($html) {
-    self::getInstance()->minify($html);
+  public static function optimizePage($html) {
+    self::getInstance()->optimizi_js($html);
     return $html;
   }
 
   // Minifies string referenced by $html, if $this->enabled is TRUE
-  public function minify(& $html) {
+  public function optimizi_js(& $html) {
     if (!$this->enabled or $this->skipping_known_user)
       return;
 
@@ -162,7 +157,7 @@ class WPSCJSLoader {
   }
 
   public function printOptionsForm($action) {
-    $id = 'htmlminify-section';
+    $id = 'optimize-js-section';
     ?>
     <fieldset id="<?php echo $id; ?>" class="options"> 
     <h4>Javascript Loader</h4>
@@ -198,7 +193,7 @@ class WPSCJSLoader {
 
 /* function WPSCJSLoader_settings
  *
- * Inserts an "on/off switch" for HTML Minify into the WP Super Cache
+ * Inserts an "on/off switch" for Javascript Loader into the WP Super Cache
  * configuration screen in WordPress' settings section.
  *
  * Must be defined as a function in global scope to be usable with the
@@ -213,27 +208,27 @@ function WPSCJSLoader_settings() {
   if (isset($_POST[WPSCJSLoader::$config_varname]))
     WPSCJSLoader::getInstance()->updateOption($_POST[WPSCJSLoader::$config_varname]);
 
-  // Print HTML Minify configuration section
+  // Print Javascript Loader configuration section
   WPSCJSLoader::getInstance()->printOptionsForm($_SERVER['REQUEST_URI']);
 }
 
 add_cacheaction('cache_admin_page', 'WPSCJSLoader_settings');
 
 
-/* function WPSCJSLoader_minify
+/* function WPSCJSLoader_optimize
  *
- * Adds filter to minify the WP Super Cache buffer when wpsupercache_buffer
+ * Adds filter to insert javascript loader in the WP Super Cache buffer when wpsupercache_buffer
  * filters are executed in wp-cache-phase2.php.
  *
  * Must be defined as a function in global scope to be usable with the
  * add_cacheaction() plugin hook system of WP Super Cache.
  */
 
-function WPSCJSLoader_minify() {
-  add_filter('wpsupercache_buffer', array('WPSCJSLoader', 'minifyPage'));
+function WPSCJSLoader_optimize() {
+  add_filter('wpsupercache_buffer', array('WPSCJSLoader', 'optimizePage'));
 }
 
-add_cacheaction('add_cacheaction', 'WPSCJSLoader_minify');
+add_cacheaction('add_cacheaction', 'WPSCJSLoader_optimize');
 
 
 /* function WPSCJSLoader_check_known_user
