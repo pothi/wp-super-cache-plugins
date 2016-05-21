@@ -21,7 +21,7 @@
  *  Singleton class add-on to WP Super Cache to interface with Javascript Loader
  *  Author: Pothi Kalimuthu
  *  Author URI: https://www.tinywp.in/
- *  Version 0.2
+ *  Version 0.3
  *
  *  WP Super Cache is a static caching plugin for WordPress
  *    For more information, see: http://ocaoimh.ie/wp-super-cache/
@@ -86,6 +86,8 @@ class WPSCJSLoader {
     return $html;
   }
 
+  private $footer_script_js = "";
+
   // Minifies string referenced by $html, if $this->enabled is TRUE
   public function optimizi_js(& $html) {
     if (!$this->enabled or $this->skipping_known_user)
@@ -125,15 +127,16 @@ class WPSCJSLoader {
                     // now let's remove the whole script tag
                     $html = str_replace( $val . "\n", "", $html, $count );
                     // the following throws a generic "parse error"
-                    // if( $count == false || $count > 1 ) echo "Error occurred while removing full script line/s.\n";
+                    if( $count == false || $count > 1 ) : echo "Error occurred while removing full script line/s.\n"; endif;
 
                 else:
                     echo "Something went wrong while trying to get js_src.\n";
                 endif; // preg_match: pattern_full_js " & '
             endif; // is_jquery
         endforeach; // $matches
-        
-        $footer_script_js = $footer_script_js . "});</script>\n";
+
+        // AMP pages will not have any scripts, so skip adding end-tag
+        if( $footer_script_js != "" ) : $footer_script_js = $footer_script_js . '});' . "\n" . '</script>' . "\n"; endif;
 
     else:
         echo "No matching javascript found\n";
