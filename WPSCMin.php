@@ -1,6 +1,6 @@
 <?php
 
-/*  Copyright 2008-2011 Joel Hardi
+/*  Copyright 2008-2015 Joel Hardi
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
@@ -19,10 +19,9 @@
 /*  class WPSCMin
  *
  *  Singleton class add-on to WP Super Cache to interface with HTML Minify
- *  Originally developed by Joel Hardi (http://lyncd.com/wpscmin/)
- *  Author: Pothi Kalimuthu
- *  Author URI: https://github.com/pothi/
- *  Version 0.6
+ *  Author: Joel Hardi
+ *  Author URI: http://lyncd.com/wpscmin/
+ *  Version 0.7
  *
  *  WP Super Cache is a static caching plugin for WordPress
  *    For more information, see: http://ocaoimh.ie/wp-super-cache/
@@ -37,8 +36,6 @@
  *
  *  It requires that you download and install Minify into the WP Super Cache 
  *  plugins directory. See http://lyncd.com/wpscmin/ for instructions.
- *
- *  This version has been tested with WP Super Cache 1.4 and Minify 2.1.7
  */
 
 class WPSCMin {
@@ -97,8 +94,22 @@ class WPSCMin {
   // Given string $html, returns minified version.
   // Preserves HTML comments appended by WP Super Cache
   public static function minifyPage($html) {
+/*
+    For versions of WP Super Cache 0.9.9.5 and earlier, uncomment the code
+    section below, and comment out (or delete) the alternate code section
+    for versions 0.9.9.6+.
+*/
+  //  $parts = preg_split('/\s*(<\!-- Dynamic page generated in [^->]+-->)\s*/', $html, 2, PREG_SPLIT_DELIM_CAPTURE);
+  //  self::getInstance()->minify($parts[0]);
+  //  return implode("\n", $parts);
+/* 
+    This is the simpler, regex hack-free version for WP Super Cache 0.9.9.6+.
+*/
     self::getInstance()->minify($html);
     return $html;
+/*
+    End alternate versions
+*/
   }
 
   // Minifies string referenced by $html, if $this->enabled is TRUE
@@ -112,10 +123,10 @@ class WPSCMin {
       require_once("$this->minify_path/min/lib/Minify/HTML.php");
       // Add min/lib to include_path for CSS.php to be able to find components
       ini_set('include_path', ini_get('include_path').":$this->minify_path/min/lib");
-      require_once("$this->minify_path/min/lib/Minify/CommentPreserver.php");
-      require_once("$this->minify_path/min/lib/Minify/CSS/Compressor.php");
       require_once("$this->minify_path/min/lib/Minify/CSS.php");
-      require_once("$this->minify_path/min/lib/JSMin.php");
+      require_once("$this->minify_path/min/lib/Minify/CSS/Compressor.php");
+      require_once("$this->minify_path/min/lib/Minify/CommentPreserver.php");
+      require_once("$this->minify_path/min/lib/JSMinPlus.php");
     }
 
     // Protect from minify any fragments escaped by
@@ -127,7 +138,7 @@ class WPSCMin {
 
     $html = Minify_HTML::minify($html,
              array('cssMinifier' => array('Minify_CSS', 'minify'),
-                   'jsMinifier' => array('JSMin', 'minify')));
+                   'jsMinifier' => array('JSMinPlus', 'minify')));
 
     // Restore any escaped fragments
     $html = str_replace(array_keys($this->escapedStrings),
@@ -161,7 +172,7 @@ class WPSCMin {
         echo "disabled";
       echo ".</strong></p>";
     }
-    echo '<div class="submit"><input ' . SUBMITDISABLED . 'type="submit" value="Update" /></div>';
+    echo '<div class="submit"><input ' . SUBMITDISABLED . 'class="button-primary" type="submit" value="Update" /></div>';
     wp_nonce_field('wp-cache');
     ?>
 

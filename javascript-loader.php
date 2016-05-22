@@ -31,6 +31,8 @@
  *  This plugin to WP Super Cache is a simple Singleton class that adds 
  *  a javascript loader to load all JS asynchrounously and in order
  *
+ *  Influenced By: http://lyncd.com/wpscmin/
+ *
  */
 
 class WPSCJSLoader {

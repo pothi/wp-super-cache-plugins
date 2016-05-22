@@ -5,9 +5,9 @@ WPSCMin Reloaded is a fork of WPSCMin originally developed by Joel Hardi. Detail
 
 ## Compatibility
 Tested with the following...
-- WordPress 3.8.1
-- [WP Super Cache](http://wordpress.org/plugins/wp-super-cache/) 1.4
-- [Minify](https://code.google.com/p/minify/) 2.1.7
+- WordPress 4.5.x
+- [WP Super Cache](http://wordpress.org/plugins/wp-super-cache/) 1.4.8
+- [Minify](https://github.com/mrclay/minify/) 2.3.0
 
 ## Installation
 
@@ -16,7 +16,7 @@ Tested with the following...
 Some background: Due to the way WordPress upgrades plugins, the WPSC plugins you upload to `wp-super-cache/plugins/` will be deleted when you upgrade WP Super Cache. We can avoid this by loading the plugins from elsewhere by setting `$wp_cache_plugins_dir` to the new location in `wp-cache-config.php`. Now, WP Super Cache will look there instead.
 
 - Create a directory named 'wpscplugins' (you may choose any name, though) inside `WP_CONTENT_DIR` (that is usually `/wp-content/`)
-- Download [minify](https://code.google.com/p/minify/downloads/list), extract and copy (or move) `/min/` directory to `WP_CONTENT_DIR/wpscplugins/`.
+- Download [minify](https://github.com/mrclay/minify/releases), extract and copy (or move) `/min/` directory to `WP_CONTENT_DIR/wpscplugins/`.
 - Download [WPSCMin Reloaded plugin](https://raw2.github.com/pothi/wpscmin-reloaded/master/WPSCMin.php) and keep it at `WP_CONTENT_DIR/wpscplugins/`.
 
 At the end of this step, your `WP_CONTENT_DIR` might look like...
