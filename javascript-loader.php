@@ -119,11 +119,11 @@ class WPSCJSLoader {
 
                     // insert the "src" part in footer
                     if( $is_jquery_dependent == false ) :
-                        $footer_script_js = '<script type="text/javascript"> ' . "\n";
-                        $footer_script_js = $footer_script_js . '$script( "' . $js_src[1] . '" , function() { try{jQuery.noConflict();}catch(e){}; ' . "\n";
+						$footer_script_js = '<script type="text/javascript"> ' . "\n"
+											. '$script( "' . $js_src[1] . '" , function() { try{jQuery.noConflict();}catch(e){}; ' . "\n";
                         $is_jquery_dependent = true;
                     else:
-                        $footer_script_js = $footer_script_js . '$script( "' . $js_src[1] . '" );' . "\n";
+                        $footer_script_js .= '$script( "' . $js_src[1] . '" );' . "\n";
                     endif; // $i
 
                 else:
@@ -131,7 +131,7 @@ class WPSCJSLoader {
 					// it's probably inline JS. Let's extract it anyway...
 					$pattern_inline = "#^<script.*>(.+)</script>$#";
 					preg_match( $pattern_inline, $val, $js_inline );
-					$footer_script_js = $footer_script_js . $js_inline[1] . "\n";
+					$footer_script_js .= $js_inline[1] . "\n";
 
                 endif; // preg_match: pattern_full_js " & '
 
@@ -144,7 +144,7 @@ class WPSCJSLoader {
         endforeach; // $matches
 
         // AMP pages will not have any scripts, so skip adding end-tag
-        if( $footer_script_js != "" ) : $footer_script_js = $footer_script_js . '});' . "\n" . '</script>' . "\n"; endif;
+        if( $footer_script_js != "" ) : $footer_script_js .= '});' . "\n" . '</script>' . "\n"; endif;
 
     else:
         echo "No matching javascript found\n";
