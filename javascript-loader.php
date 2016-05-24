@@ -126,14 +126,20 @@ class WPSCJSLoader {
                         $footer_script_js = $footer_script_js . '$script( "' . $js_src[1] . '" );' . "\n";
                     endif; // $i
 
-                    // now let's remove the whole script tag
-                    $html = str_replace( $val . "\n", "", $html, $count );
-                    // the following throws a generic "parse error"
-                    if( $count == false || $count > 1 ) : echo "Error occurred while removing full script line/s.\n"; endif;
-
                 else:
-                    echo "Something went wrong while trying to get js_src.\n";
+                    // echo "Something went wrong while trying to get js_src on the following resource...\n\n$val\n\n";
+					// it's probably inline JS. Let's extract it anyway...
+					$pattern_inline = "#^<script.*>(.+)</script>$#";
+					preg_match( $pattern_inline, $val, $js_inline );
+					$footer_script_js = $footer_script_js . $js_inline[1] . "\n";
+
                 endif; // preg_match: pattern_full_js " & '
+
+				// now let's remove the whole script tag
+				$html = str_replace( $val . "\n", "$val", $html, $count ); // remove newline, if found
+				$html = str_replace( $val, "", $html, $count );
+				if( $count == false || $count > 1 ) : echo "Error occurred while removing the following full script line/s...\n\n$val\n\n"; endif;
+
             endif; // is_jquery
         endforeach; // $matches
 
